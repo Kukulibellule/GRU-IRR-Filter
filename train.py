@@ -240,7 +240,6 @@ else:
 gru = model.LowpassRNN(hidden_size=args.hidden_size, num_layers=args.num_layers).to(
     device
 )
-gru = torch.compile(gru)
 optimizer = Adam(gru.parameters(), lr=args.initial_lr)
 
 # reconstruction loss used in DDSP paper

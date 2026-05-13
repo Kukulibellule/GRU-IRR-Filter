@@ -16,7 +16,7 @@ parser.add_argument(
     action="store_true",
 )
 args = parser.parse_args()
-
+""""
 try:
     checkpoint = torch.load(args.model)
 except RuntimeError:
@@ -38,6 +38,10 @@ except Exception:
         # This is a final model and not a ckpt
         state_dict = {k.replace("_orig_mod.", ""): v for k, v in checkpoint.items()}
         gru.load_state_dict(state_dict)
+
+"""
+
+gru = model.LowpassRNN(hidden_size=args.hidden_size, num_layers=args.num_layers)
 gru.eval()
 
 buffer_size = args.buffer_size
@@ -49,8 +53,18 @@ import torch.onnx
 
 gru.eval()
 
-dummy_x = torch.randn(1, buffer_size, 2)
-dummy_hidden = torch.zeros(2, 1, hidden_size)
+
+dummy_x = torch.randn(1, 2)  # Un seul échantillon, deux entrées
+dummy_hidden = torch.zeros(1, args.hidden_size) # Une seule couche de cache
+
+torch.onnx.export(
+    gru,
+    (dummy_x, dummy_hidden),
+    args.model_out,
+    input_names=["x", "hidden_in"],
+    output_names=["output", "hidden_out"],
+    opset_version=15 # On monte un peu l'opset pour plus de stabilité
+)
 
 dynamic_axes = None
 if not args.no_dynamic_shapes:

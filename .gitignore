@@ -2,3 +2,10 @@ checkpoints-*
 dataset-*
 __pycache__
 .vscode
+AI_Generated_Code/
+st_ai_output/
+ckpt-*/
+*.onnx
+*.onnx.data
+onnx_inference_test/butter_lowpass*.onnx
+onnx_inference_test/reference_butter_lowpass_bs128*
